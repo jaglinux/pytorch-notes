@@ -40,3 +40,24 @@ def demo_basic():
 
 if __name__ == "__main__":
     demo_basic()
+
+'''
+NODE01: 
+torchrun \
+              --nnodes=2 \
+              --nproc_per_node=8 \
+              --rdzv_id=100 \
+              --rdzv_backend=c10d \
+              --rdzv_endpoint=NODE01:29400 \
+              elastic_ddp.py
+
+NODE02: 
+torchrun \
+              --nnodes=2 \
+              --nproc_per_node=8 \
+              --rdzv_id=100 \
+              --rdzv_backend=c10d \
+              --rdzv_endpoint=NODE01:29400 \
+              elastic_ddp.py
+
+'''
