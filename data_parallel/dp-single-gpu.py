@@ -20,9 +20,11 @@ class DummyDataset(Dataset):
         self.length = length
 
     def __getitem__(self, index):
+        # This will be multiplied by batch_size
         return torch.randn(10), torch.randn(1)
 
     def __len__(self):
+        # total number of datasets
         return self.length
 
 
@@ -35,6 +37,8 @@ if torch.cuda.device_count() > 1:
 dataset = DummyDataset(1000)
 # for every iteration, batch_size * torch.randn(10), batch_size * torch_randn(1) will be returned
 # 64 * 10 , 64 * 1
+# total number of iterations in an epoch is len(dataset) / batch_size
+# 1000 / 64 = 16. Last iteration will have less batch size
 dataloader = DataLoader(dataset, batch_size=64)
 
 # Define loss and optimizer
