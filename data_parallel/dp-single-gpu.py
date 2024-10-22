@@ -1,3 +1,5 @@
+# this code is without DP
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
@@ -31,6 +33,8 @@ if torch.cuda.device_count() > 1:
     print(f"Using {torch.cuda.device_count()} GPUs!")
     #model = nn.DataParallel(model)
 dataset = DummyDataset(1000)
+# for every iteration, batch_size * torch.randn(10), batch_size * torch_randn(1) will be returned
+# 64 * 10 , 64 * 1
 dataloader = DataLoader(dataset, batch_size=64)
 
 # Define loss and optimizer
@@ -62,3 +66,76 @@ for epoch in range(10):
         optimizer.step()
 
     print(f"Epoch {epoch + 1}, Loss: {loss.item()}")
+
+#o/p (using only 2 epochs)
+'''
+cuda AMD Instinct MI250X/MI250
+model is on  cuda:0
+epoch is  0  iteration is  0
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  1
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  2
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  3
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  4
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  5
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  6
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  7
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  8
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  9
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  10
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  11
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  12
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  13
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  14
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  0  iteration is  15
+x and y shapes are  torch.Size([40, 10]) torch.Size([40, 1])
+Epoch 1, Loss: 1.5829228162765503
+epoch is  1  iteration is  0
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  1
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  2
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  3
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  4
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  5
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  6
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  7
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  8
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  9
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  10
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  11
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  12
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  13
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  14
+x and y shapes are  torch.Size([64, 10]) torch.Size([64, 1])
+epoch is  1  iteration is  15
+x and y shapes are  torch.Size([40, 10]) torch.Size([40, 1])
+Epoch 2, Loss: 1.2430177927017212
+
+'''
