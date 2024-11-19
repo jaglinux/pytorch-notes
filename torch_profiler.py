@@ -32,3 +32,5 @@ if __name__=="__main__":
     print(f"Bake Time={(time.perf_counter_ns() - t0)/1000}us")
     if hasattr(prof, "export_chrome_trace"):
         prof.export_chrome_trace(f"profiler.json")
+
+# use chrome://tracing/ and load profiler.json
