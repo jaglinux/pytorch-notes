@@ -1,6 +1,6 @@
 import torch
 
-
+# use HIPBLASLT_ALLOW_TF32=1
 # Check if CUDA is available
 if torch.cuda.is_available():
     # Enable TF32 for matrix multiplications
