@@ -2,7 +2,7 @@
 
 __global__ void helloworld_kernel()
 {
-        printf("warpsize %d", __AMDGCN_WAVEFRONT_SIZE);
+        printf("on gpu kernel, warpsize %d \n", __AMDGCN_WAVEFRONT_SIZE);
 }
 
 
@@ -13,4 +13,14 @@ int main() {
                         hipStreamDefault // stream where the kernel should execute: default stream
                         >>>();
    hipDeviceSynchronize();
+   printf("on host, warpsize %d \n", __AMDGCN_WAVEFRONT_SIZE);
 }
+
+// on AMD Instinct accelerators
+//on gpu kernel, warpsize 64
+//on host, warpsize 64
+
+//on Radeon GPUs
+//on gpu kernel, warpsize 32
+//on host, warpsize 64
+
