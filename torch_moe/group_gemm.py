@@ -4,7 +4,6 @@ import torch
 def build_offsets(group_sizes: list[int], device: str) -> torch.Tensor:
     """
     Convert per-group sizes to cumulative int32 offsets expected by torch._grouped_mm.
-
     """
     return torch.cumsum(
         torch.tensor(group_sizes, device=device, dtype=torch.int32),
@@ -23,7 +22,7 @@ def grouped_mm_2d3d_example() -> None:
     device = "cuda"
     dtype = torch.bfloat16
 
-    # Three groups; every group has tokens.
+    # Three experts/groups; router has already assigned tokens to each group.
     group_sizes = [4, 2, 3]
     offs = build_offsets(group_sizes, device)
 
@@ -32,7 +31,9 @@ def grouped_mm_2d3d_example() -> None:
     K = 16
     N = 8
 
+    # x: routed token activations after dispatch, flattened as [total_tokens, hidden_size].
     x = torch.randn(total_tokens, K, device=device, dtype=dtype)
+    # w: per-expert FFN projection weights selected by routing, one [K, N] matrix per expert.
     w = torch.randn(num_groups, K, N, device=device, dtype=dtype)
 
     # torch._grouped_mm returns [total_tokens, N] for 2d x 3d.
