@@ -1,0 +1,103 @@
+cache snapshot (local only): /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775
+
+=== token id mapping ===
+file (snapshot) : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/vocab.json
+file (blob)     : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/4783fe10ac3adce15ac8f358ef5462739852c569
+entries         : 151643 (showing 40)
+token_id | token
+       0 | '!'
+       1 | '"'
+       2 | '#'
+       3 | '$'
+       4 | '%'
+       5 | '&'
+       6 | "'"
+       7 | '('
+       8 | ')'
+       9 | '*'
+      10 | '+'
+      11 | ','
+      12 | '-'
+      13 | '.'
+      14 | '/'
+      15 | '0'
+      16 | '1'
+      17 | '2'
+      18 | '3'
+      19 | '4'
+      20 | '5'
+      21 | '6'
+      22 | '7'
+      23 | '8'
+      24 | '9'
+      25 | ':'
+      26 | ';'
+      27 | '<'
+      28 | '='
+      29 | '>'
+      30 | '?'
+      31 | '@'
+      32 | 'A'
+      33 | 'B'
+      34 | 'C'
+      35 | 'D'
+      36 | 'E'
+      37 | 'F'
+      38 | 'G'
+      39 | 'H'
+
+=== lookup ===
+file (snapshot) : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/vocab.json
+file (blob)     : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/4783fe10ac3adce15ac8f358ef5462739852c569
+0 -> '!'
+11 -> ','
+81917 -> 'ĠExplain'
+24231 -> 'Ġcomputing'
+70403 -> 'ĠGPUs'
+
+=== model weights ===
+file (snapshot) : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/model.safetensors
+file (blob)     : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+tensor count    : 290
+
+model.embed_tokens.weight
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(151936, 896) dtype=torch.bfloat16
+  values[:6]=[-0.0103759765625, 0.040771484375, 0.00970458984375, 6.961822509765625e-05, -0.027099609375, -0.0029754638671875]
+
+model.layers.0.input_layernorm.weight
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(896,) dtype=torch.bfloat16
+  values[:6]=[-0.046875, 0.04443359375, -0.025390625, 0.08447265625, -0.043701171875, 0.0390625]
+
+model.layers.0.mlp.down_proj.weight
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(896, 4864) dtype=torch.bfloat16
+  values[:6]=[-0.0079345703125, 0.00811767578125, 0.0291748046875, 0.00640869140625, -0.007537841796875, -0.0108642578125]
+
+model.layers.0.mlp.gate_proj.weight
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(4864, 896) dtype=torch.bfloat16
+  values[:6]=[-0.02880859375, 0.021240234375, -0.0054931640625, 0.023681640625, 0.01055908203125, 0.029052734375]
+
+model.layers.0.mlp.up_proj.weight
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(4864, 896) dtype=torch.bfloat16
+  values[:6]=[-0.0111083984375, 0.00665283203125, 0.000820159912109375, 0.0033721923828125, 0.006195068359375, -0.0142822265625]
+
+model.layers.0.post_attention_layernorm.weight
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(896,) dtype=torch.bfloat16
+  values[:6]=[0.609375, 0.6484375, 0.57421875, 0.6875, 0.61328125, 0.6015625]
+
+model.layers.0.self_attn.k_proj.bias
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(128,) dtype=torch.bfloat16
+  values[:6]=[-8.8125, -3.328125, -6.3125, 0.6171875, -0.17578125, 9.375]
+
+model.layers.0.self_attn.k_proj.weight
+  file          : /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/blobs/fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe
+  shape=(128, 896) dtype=torch.bfloat16
+  values[:6]=[0.030029296875, -0.10009765625, -0.0025787353515625, -0.0084228515625, 0.0216064453125, -0.1044921875]
+
+... 282 more tensors not printed
