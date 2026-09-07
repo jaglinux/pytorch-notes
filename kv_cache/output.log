@@ -1,0 +1,133 @@
+Fetching 'Qwen/Qwen2.5-0.5B-Instruct' via Hugging Face...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+W0907 00:13:55.185000 812153 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W0907 00:13:55.208000 812153 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████| 290/290 [00:00<00:00, 1140.21it/s]
+Model placed on: cuda:7 (of 8 visible GPUs)
+
+================ PROMPT ================
+Prompt length          : 15090 tokens
+Tokens to generate     : 16  (table rows 0 through 15)
+Repeated unit          : 'Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV cache, latency, and throughput. '
+repeats                : 656
+--- prompt start (first 400 chars) ---
+Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV cache, latency, and throughput. Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV cache, latency, and throughput. Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV cache, latency, and throughput. Explain computing, memory, and transformers in detail. Cover
+--- prompt end (last 400 chars) ---
+l. Cover GPUs, attention, KV cache, latency, and throughput. Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV cache, latency, and throughput. Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV cache, latency, and throughput. Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV cache, latency, and throughput.
+=======================================
+
+--- CUDA memory (cuda:7): after model load ---
+  allocated         :     942.55 MB
+  reserved          :     954.00 MB
+  max allocated     :     942.55 MB
+  max reserved      :     954.00 MB
+  device free/total :  256310.00 / 258032.00 MB
+
+[Warmup] prompt=15090 tokens, 4 steps each path...
+
+--- CUDA memory (cuda:7): after warmup ---
+  allocated         :    1018.55 MB
+  reserved          :   10802.00 MB
+  max allocated     :    9970.47 MB
+  max reserved      :   10802.00 MB
+  device free/total :  246110.00 / 258032.00 MB
+
+[Running Experiment 1: Standard Inference Without Cache]
+
+--- Experiment 1 predicted tokens ---
+step | token id | token text
+    0 |    81917 | ' Explain'
+    1 |    24231 | ' computing'
+    2 |       11 | ','
+    3 |     4938 | ' memory'
+    4 |       11 | ','
+    5 |      323 | ' and'
+    6 |    86870 | ' transformers'
+    7 |      304 | ' in'
+    8 |     7716 | ' detail'
+    9 |       13 | '.'
+   10 |    17757 | ' Cover'
+   11 |    70403 | ' GPUs'
+   12 |       11 | ','
+   13 |     6529 | ' attention'
+   14 |       11 | ','
+   15 |    84648 | ' KV'
+ decoded continuation:  Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV
+
+--- CUDA memory (cuda:7): experiment 1 (no cache) done ---
+  allocated         :    5396.68 MB
+  reserved          :   28310.00 MB
+  max allocated     :    9800.86 MB
+  max reserved      :   28310.00 MB
+  device free/total :  228600.00 / 258032.00 MB
+
+[Running Experiment 2: Optimized Inference With DynamicCache]
+
+--- Experiment 2 predicted tokens ---
+step | token id | token text
+    0 |    81917 | ' Explain'
+    1 |    24231 | ' computing'
+    2 |       11 | ','
+    3 |     4938 | ' memory'
+    4 |       11 | ','
+    5 |      323 | ' and'
+    6 |    86870 | ' transformers'
+    7 |      304 | ' in'
+    8 |     7716 | ' detail'
+    9 |       13 | '.'
+   10 |    17757 | ' Cover'
+   11 |    70403 | ' GPUs'
+   12 |       11 | ','
+   13 |     6529 | ' attention'
+   14 |       11 | ','
+   15 |    84648 | ' KV'
+ decoded continuation:  Explain computing, memory, and transformers in detail. Cover GPUs, attention, KV
+
+--- CUDA memory (cuda:7): experiment 2 (with KV cache) done ---
+  allocated         :    1197.00 MB
+  reserved          :    6282.00 MB
+  max allocated     :    5596.48 MB
+  max reserved      :    6282.00 MB
+  device free/total :  250628.00 / 258032.00 MB
+
+--- KV cache object ---
+  sequence length    : 15105 tokens
+  stored tensors     : 48
+  KV bytes in RAM/VRAM:     177.01 MB
+  allocated delta    :     178.44 MB
+
+================ BENCHMARK STATS COMPARED ================
+Prompt Size            : 15090 tokens
+Generated Steps        : 16 steps
+----------------------------------------------------------
+Step | No-Cache Latency (ms) | Cached Latency (ms) | Speedup Factor
+----------------------------------------------------------
+ 0 (Prefill) |                65.60 |               66.72 | 0.98x
+ 1 (Decode)  |                65.64 |               14.04 | 4.67x
+ 2 (Decode)  |                65.75 |               13.52 | 4.86x
+ 3 (Decode)  |                65.56 |               13.57 | 4.83x
+ 4 (Decode)  |                65.99 |               13.48 | 4.89x
+ 5 (Decode)  |                65.89 |               13.45 | 4.90x
+ 6 (Decode)  |                65.67 |               13.43 | 4.89x
+ 7 (Decode)  |                65.90 |               13.45 | 4.90x
+ 8 (Decode)  |                65.99 |               13.57 | 4.86x
+ 9 (Decode)  |                65.95 |               13.43 | 4.91x
+ 10 (Decode)  |                65.65 |               13.56 | 4.84x
+ 11 (Decode)  |                65.80 |               13.54 | 4.86x
+ 12 (Decode)  |                65.92 |               13.51 | 4.88x
+ 13 (Decode)  |                65.89 |               13.41 | 4.91x
+ 14 (Decode)  |                62.50 |               13.49 | 4.63x
+ 15 (Decode)  |                66.82 |               13.53 | 4.94x
+----------------------------------------------------------
+ Prefill (step 0)      : no-cache 65.60 ms | cache 66.72 ms
+ Avg decode (steps 1+) : no-cache 65.66 ms | cache 13.53 ms | 4.85x
+ KV cache is helping if avg decode speedup is clearly above 1.0x
+==========================================================
+
+================ CUDA MEMORY SUMMARY ================
+ No-cache peak allocated :    9800.86 MB
+ Cached peak allocated   :    5596.48 MB
+ No-cache alloc delta    :    4378.12 MB
+ Cached alloc delta      :     178.44 MB
+ KV cache stored         :     177.01 MB
+====================================================
