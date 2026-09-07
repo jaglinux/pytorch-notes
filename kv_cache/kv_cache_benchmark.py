@@ -30,14 +30,28 @@ else:
     print(f"No CUDA/ROCm GPU detected (AMD: {amd_gpu_detected})")
 
 model_id = "Qwen/Qwen2.5-0.5B-Instruct"
-print(f"Fetching '{model_id}' via Hugging Face...")
-
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
+load_kw = dict(
     dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
     device_map="auto",
 )
+
+
+def from_local_or_hub(loader, model_id, **kwargs):
+    name = getattr(loader, "__name__", str(loader))
+    print(f"[{name}] looking up '{model_id}' in local Hugging Face cache...", flush=True)
+    try:
+        obj = loader.from_pretrained(model_id, local_files_only=True, **kwargs)
+        print(f"[{name}] loaded from local cache (no download)", flush=True)
+        return obj
+    except (OSError, ValueError) as e:
+        print(f"[{name}] cache miss ({type(e).__name__}); downloading from Hugging Face...", flush=True)
+        obj = loader.from_pretrained(model_id, **kwargs)
+        print(f"[{name}] download finished", flush=True)
+        return obj
+
+
+tokenizer = from_local_or_hub(AutoTokenizer, model_id)
+model = from_local_or_hub(AutoModelForCausalLM, model_id, **load_kw)
 device = model.device
 model.eval()
 print(f"Model placed on: {device} (of {torch.cuda.device_count()} visible GPUs)")
@@ -59,16 +73,14 @@ warmup_steps = 4
 
 prompt_text = tokenizer.decode(input_ids[0], skip_special_tokens=True)
 print("\n================ PROMPT ================")
-print("The 15k length is NOT 15 unique sentences. The same `base` string is")
-print("repeated in Python with `base * repeats`, then cut to target_ctx tokens.")
-print(f"base text              : {base!r}")
-print(f"base token count       : {len(tokenizer(base).input_ids)}")
-print(f"repeats                : {repeats}")
-print(f"chars before tokenize  : {len(prompt_string)}")
 print(f"Prompt length          : {prompt_len} tokens")
 print(f"Tokens to generate     : {max_new_tokens}  (table rows 0 through {max_new_tokens - 1})")
-print("--- full prompt text ---")
-print(prompt_text)
+print(f"Repeated unit          : {base!r}")
+print(f"repeats                : {repeats}")
+print("--- prompt start (first 400 chars) ---")
+print(prompt_text[:400])
+print("--- prompt end (last 400 chars) ---")
+print(prompt_text[-400:])
 print("=======================================")
 
 
