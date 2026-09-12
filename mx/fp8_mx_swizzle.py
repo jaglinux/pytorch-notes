@@ -74,7 +74,7 @@ def _bench(fn, m, n, k):
     return latency_ms, _tflops(m, n, k, latency_ms)
 
 
-def _summarize(name, out, ref, m, n, k, latency_ms, tflops):
+def _summarize(name, out, ref, latency_ms, tflops, bf16_ms=None):
     out_f = out.float().flatten()
     ref_f = ref.float().flatten()
     diff = (out.float() - ref.float()).abs().mean().item()
@@ -87,7 +87,21 @@ def _summarize(name, out, ref, m, n, k, latency_ms, tflops):
     print(f"diff:   {diff}")
     print(f"time:   {latency_ms:.3f} ms")
     print(f"tflops: {tflops:.2f}")
-    torch.testing.assert_close(out.float(), ref.float(), atol=1e-1, rtol=1e-1)
+    speedup = 1.0 if bf16_ms is None else bf16_ms / latency_ms
+    print(f"speedup vs bf16: {speedup:.2f}x")
+    if name != "bf16":
+        torch.testing.assert_close(out.float(), ref.float(), atol=1e-1, rtol=1e-1)
+
+
+def call_bf16(a_hp, b_hp, m, k, n):
+    b_col = b_hp.t()
+
+    def gemm():
+        return a_hp @ b_col
+
+    out = gemm()
+    latency_ms, tflops = _bench(gemm, m, n, k)
+    return out, out, latency_ms, tflops
 
 
 def call_fp8(a_hp, b_hp, m, k, n):
@@ -196,29 +210,33 @@ def main():
     print(f"k={k}")
     print(f"n={n}")
 
+    out, ref, bf16_ms, tflops = call_bf16(a_hp, b_hp, m, k, n)
+    _summarize("bf16", out, ref, bf16_ms, tflops)
+
     out, ref, latency_ms, tflops = call_fp8(a_hp, b_hp, m, k, n)
-    _summarize("fp8", out, ref, m, n, k, latency_ms, tflops)
+    _summarize("fp8", out, ref, latency_ms, tflops, bf16_ms)
 
     scale_a, a_mx = _to_mxfp(a_hp.contiguous())
     scale_b, b_mx = _to_mxfp(b_hp.contiguous())
 
     out, ref, latency_ms, tflops = call_mxfp8_v1(a_mx, b_mx, scale_a, scale_b, m, k, n)
-    _summarize("mxfp8 v1", out, ref, m, n, k, latency_ms, tflops)
+    _summarize("mxfp8 v1", out, ref, latency_ms, tflops, bf16_ms)
 
     out, ref, latency_ms, tflops = call_mxfp8_v2_no_swizzle(
         a_mx, b_mx, scale_a, scale_b, m, k, n
     )
-    _summarize("mxfp8 v2 no swizzle", out, ref, m, n, k, latency_ms, tflops)
+    _summarize("mxfp8 v2 no swizzle", out, ref, latency_ms, tflops, bf16_ms)
 
     out, ref, latency_ms, tflops = call_mxfp8_v2_swizzle_32_8(
         a_mx, b_mx, scale_a, scale_b, m, k, n
     )
-    _summarize("mxfp8 v2 SWIZZLE_32_8", out, ref, m, n, k, latency_ms, tflops)
+    _summarize("mxfp8 v2 SWIZZLE_32_8", out, ref, latency_ms, tflops, bf16_ms)
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 '''
 python run_scaled_mm.py 8192
@@ -227,40 +245,55 @@ m=8192
 k=8192
 n=8192
 
+=== bf16 ===
+shape:  (8192, 8192)
+dtype:  torch.bfloat16
+out[:4]: [-93.0, -72.5, -138.0, 29.25]
+ref[:4]: [-93.0, -72.5, -138.0, 29.25]
+diff:   0.0
+time:   0.855 ms
+tflops: 1285.61
+speedup vs bf16: 1.00x
+
 === fp8 ===
 shape:  (8192, 8192)
 dtype:  torch.bfloat16
-out[:4]: [-43.0, 58.25, 64.5, 96.0]
-ref[:4]: [-42.93224334716797, 58.14308166503906, 64.42999267578125, 96.16051483154297]
-diff:   0.10160034149885178
-time:   0.420 ms
-tflops: 2620.75
+out[:4]: [-90.5, -74.5, -141.0, 27.5]
+ref[:4]: [-90.6462173461914, -74.34554290771484, -140.90260314941406, 27.48375701904297]
+diff:   0.10159234702587128
+time:   0.419 ms
+tflops: 2621.18
+speedup vs bf16: 2.04x
 
 === mxfp8 v1 ===
 shape:  (8192, 8192)
 dtype:  torch.bfloat16
-out[:4]: [-42.75, 58.0, 64.0, 96.0]
-ref[:4]: [-42.94017791748047, 58.150978088378906, 64.42330932617188, 96.14852905273438]
-diff:   0.2027888000011444
-time:   0.627 ms
-tflops: 1753.18
+out[:4]: [-90.5, -74.0, -140.0, 27.375]
+ref[:4]: [-90.65873718261719, -74.33421325683594, -140.90338134765625, 27.47919273376465]
+diff:   0.20274898409843445
+time:   0.626 ms
+tflops: 1756.29
+speedup vs bf16: 1.37x
 
 === mxfp8 v2 no swizzle ===
 shape:  (8192, 8192)
 dtype:  torch.bfloat16
-out[:4]: [-42.75, 58.0, 64.0, 96.0]
-ref[:4]: [-42.94017791748047, 58.150978088378906, 64.42330932617188, 96.14852905273438]
-diff:   0.2027888000011444
+out[:4]: [-90.5, -74.0, -140.0, 27.375]
+ref[:4]: [-90.65873718261719, -74.33421325683594, -140.90338134765625, 27.47919273376465]
+diff:   0.20274898409843445
 time:   0.627 ms
-tflops: 1754.71
+tflops: 1754.88
+speedup vs bf16: 1.37x
 
 === mxfp8 v2 SWIZZLE_32_8 ===
 shape:  (8192, 8192)
 dtype:  torch.bfloat16
-out[:4]: [-43.0, 58.25, 64.5, 96.0]
-ref[:4]: [-42.94017791748047, 58.150978088378906, 64.42330932617188, 96.14852905273438]
-diff:   0.10160454362630844
-time:   0.586 ms
-tflops: 1876.62
+out[:4]: [-90.5, -74.5, -141.0, 27.5]
+ref[:4]: [-90.65873718261719, -74.33421325683594, -140.90338134765625, 27.47919273376465]
+diff:   0.10159769654273987
+time:   0.568 ms
+tflops: 1934.74
+speedup vs bf16: 1.50x
+
 
 '''
